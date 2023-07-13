@@ -20,7 +20,7 @@ load_dotenv()
 SCENEX_SECRET = os.getenv('SCENEX-SECRET')
 
 # Create directory structure
-os.makedirs('output/json', exist_ok=True)
+# os.makedirs('output/json', exist_ok=True)
 os.makedirs('output/csv', exist_ok=True)
 
 IMG_URL = sys.argv[1]
