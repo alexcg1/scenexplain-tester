@@ -4,34 +4,52 @@ These script use the SceneXplain API to compare algorithms
 
 ## One image all algos
 
-Take one image and:
+Take image(s) and:
 
 - Get descriptions using all algorithms (you can edit which algos in the script)
 - Optionally ask a question
 - Write output to a CSV file
 
-### Syntax
+### General syntax
 
 ```sh
-python one-image-all-algos.py <IMAGE_LOCATION> <OPTIONAL_QUESTION>
+python app.py <FILE_LOCATION> <OPTIONAL_QUESTION>
 ```
 
-For example:
+### Local file
 
 ```sh
-python one-image-all-algos.py pexels-photo-2529172.jpeg # read local file, write to pexels-photo-2529172.csv
+python app.py foo.jpeg # read local file, write to foo.csv
 ```
 
-```sh
-python one-image-all-algos.py pexels-photo-2529172.jpeg "what color is the jacket?" # ask question about local file, write to pexels-photo-2529172.csv
-```
+### Local file with question
 
 ```sh
-python one-image-all-algos.py input_images # read from dir, write to input_images.csv
+python app.py foo.jpeg "what color is the jacket?" # ask question about local file, write to foo.csv
 ```
 
+### Local directory
+
+You can add a question at the end that applies to all images in the directory
+
 ```sh
-python one-image-all-algos.py https://images.pexels.com/photos/2529172/pexels-photo-2529172.jpeg # read url, write to pexels-photo-2529172.csv
+python app.py input_images # read from dir, write to input_images.csv
+```
+
+### URL
+
+You can add an optional question at the end
+
+```sh
+python app.py https://bar.com/foo.jpg # read url, write to foo.csv
+```
+
+### CSV
+
+Use `image` and optional `question` to specify each image/question
+
+```sh
+python app.py foo.csv # read url, write to foo.csv
 ```
 
 ### Example output
