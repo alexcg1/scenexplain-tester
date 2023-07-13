@@ -1,4 +1,8 @@
-
+**/*.csv
+**/*.jpg
+**/*.jpeg
+**/*.png
+**/*.json
 
 ### Created by https://www.gitignore.io
 ### Python ###
