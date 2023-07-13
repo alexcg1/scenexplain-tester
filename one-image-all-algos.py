@@ -43,17 +43,17 @@ def image_to_data_uri(file_path):
 # support single files
 if os.path.isfile(IMG_URL):
     images = [image_to_data_uri(IMG_URL)]
-    csv_filename = f"output/csv/{timestamp}/{IMG_URL.split('/')[-1].split('.')[0]}.csv"
+    csv_filename = f"output/csv/{timestamp}/{os.path.basename(IMG_URL)}.csv"
 
 # support dirs of images
 elif os.path.isdir(IMG_URL):
     png_files = glob.glob(f'{IMG_URL}/*.png')
     jpg_files = glob.glob(f'{IMG_URL}/*.jpg')
     jpeg_files = glob.glob(f'{IMG_URL}/*.jpeg')
-    image_urls = png_files + jpg_files + jpeg_files
+    image_files = png_files + jpg_files + jpeg_files
 
     images = []
-    for image in image_urls:
+    for image in image_files:
         image = image_to_data_uri(image)
         images.append(image)
 
@@ -95,7 +95,7 @@ for image in images:
 
         response_data = response.read().decode("utf-8")
         response_json = json.loads(response_data)
-        pprint(response_json['result'])
+        # pprint(response_json['result'])
         result = {
                 'image_url': response_json['result'][0]['image'],
                 'algorithm': algo,
