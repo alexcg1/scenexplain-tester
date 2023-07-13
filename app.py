@@ -59,7 +59,13 @@ for i, image in enumerate(images, start=1):
 
         del image['image']  # otherwise csv gets bloated with base64
         image['algorithm'] = algo
-        image['scenex_url'] = response['result'][0]['image'],
+
+        # sometimes this bugs out so skip the image
+        if 'image' in response['result'][0].keys():
+            image['scenex_url'] = response['result'][0]['image'],
+        else:
+            print("Problem processing image")
+            continue
 
         if 'question' in image.keys():
             image['answer'] = response['result'][0]['answer']
