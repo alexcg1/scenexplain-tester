@@ -50,9 +50,12 @@ elif os.path.isdir(IMG_URL):
     png_files = glob.glob(f'{IMG_URL}/*.png')
     jpg_files = glob.glob(f'{IMG_URL}/*.jpg')
     jpeg_files = glob.glob(f'{IMG_URL}/*.jpeg')
-    images = png_files + jpg_files + jpeg_files
-    for image in images:
+    image_urls = png_files + jpg_files + jpeg_files
+
+    images = []
+    for image in image_urls:
         image = image_to_data_uri(image)
+        images.append(image)
 
     csv_filename = f"output/csv/{timestamp}/{IMG_URL}.csv"
 
@@ -92,6 +95,7 @@ for image in images:
 
         response_data = response.read().decode("utf-8")
         response_json = json.loads(response_data)
+        pprint(response_json['result'])
         result = {
                 'image_url': response_json['result'][0]['image'],
                 'algorithm': algo,
