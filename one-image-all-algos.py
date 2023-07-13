@@ -4,11 +4,11 @@ Test each algorithm with a single image and optional question, and write results
 
 import base64
 import csv
+import glob
 import http.client
 import json
 import os
 import sys
-from os.path import isfile
 from pprint import pprint
 
 from dotenv import load_dotenv
@@ -29,15 +29,29 @@ if len(sys.argv) > 2:
 
 algos = ['Aqua', 'Bolt', 'Comet', 'Dune', 'Ember', 'Flash', 'Glide']
 
+
 def image_to_data_uri(file_path):
     with open(file_path, "rb") as image_file:
         encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
         return f"data:image/jpeg;base64,{encoded_image}"
 
+
+# support single files
 if os.path.isfile(IMG_URL):
-    image = image_to_data_uri(IMG_URL)
+    images = [image_to_data_uri(IMG_URL)]
+
+# support dirs of images
+elif os.path.isdir(IMG_URL):
+    png_files = glob.glob(f'{IMG_URL}/*.png')
+    jpg_files = glob.glob(f'{IMG_URL}/*.jpg')
+    images = png_files + jpg_files
+    for image in images:
+        image = image_to_data_uri(IMG_URL)
+
+# support image URLs
 else:
-    image = IMG_URL
+    images = [IMG_URL]
+
 
 headers = {
     "x-api-key": f"token {SCENEX_SECRET}",
@@ -45,38 +59,40 @@ headers = {
 }
 
 results = []
-for algo in algos:
-    print(f"Getting result for {algo}")
-    data = {
-        "data": [
-            {"image": image, "features": [], "algorithm": algo},
-        ]
-    }
+connection = http.client.HTTPSConnection("api.scenex.jina.ai")
+for image in images:
+    print(f"Processing {image}")
+    for algo in algos:
+        print(f"Getting result for {algo}")
+        data = {
+            "data": [
+                {"image": image, "features": [], "algorithm": algo},
+            ]
+        }
 
-    if 'QUESTION' in locals():
-        data['data'][0]['features'].append('question_answer')
-        data['data'][0]['question'] = QUESTION
-    else:
-        QUESTION = ''
+        if 'QUESTION' in locals():
+            data['data'][0]['features'].append('question_answer')
+            data['data'][0]['question'] = QUESTION
+        else:
+            QUESTION = ''
 
-    connection = http.client.HTTPSConnection("api.scenex.jina.ai")
-    connection.request("POST", "/v1/describe", json.dumps(data), headers)
-    response = connection.getresponse()
+        connection.request("POST", "/v1/describe", json.dumps(data), headers)
+        response = connection.getresponse()
 
-    response_data = response.read().decode("utf-8")
-    response_json = json.loads(response_data)
-    result = {
-            'image_url': response_json['result'][0]['image'],
-            'algorithm': algo,
-            }
+        response_data = response.read().decode("utf-8")
+        response_json = json.loads(response_data)
+        result = {
+                'image_url': response_json['result'][0]['image'],
+                'algorithm': algo,
+                }
 
-    if QUESTION:
-        result['question'] = QUESTION
-        result['output'] = response_json['result'][0]['answer']
-    else:
-        result['output'] = response_json['result'][0]['text'],
+        if QUESTION:
+            result['question'] = QUESTION
+            result['output'] = response_json['result'][0]['answer']
+        else:
+            result['output'] = response_json['result'][0]['text'],
 
-    results.append(result)
+        results.append(result)
 
 connection.close()
 
