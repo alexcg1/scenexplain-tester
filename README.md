@@ -19,15 +19,19 @@ python one-image-all-algos.py <IMAGE_LOCATION> <OPTIONAL_QUESTION>
 For example:
 
 ```sh
-python one-image-all-algos.py foo.jpg # writes to foo.csv
+python one-image-all-algos.py pexels-photo-2529172.jpeg # read local file, write to pexels-photo-2529172.csv
 ```
 
 ```sh
-python one-image-all-algos.py https://images.pexels.com/photos/2529172/pexels-photo-2529172.jpeg # writes to pexels-photo-2529172.csv
+python one-image-all-algos.py pexels-photo-2529172.jpeg "what color is the jacket?" # ask question about local file, write to pexels-photo-2529172.csv
 ```
 
 ```sh
-python one-image-all-algos.py https://images.pexels.com/photos/2529172/pexels-photo-2529172.jpeg # writes to pexels-photo-2529172.csv
+python one-image-all-algos.py input_images # read from dir, write to input_images.csv
+```
+
+```sh
+python one-image-all-algos.py https://images.pexels.com/photos/2529172/pexels-photo-2529172.jpeg # read url, write to pexels-photo-2529172.csv
 ```
 
 ### Example output
