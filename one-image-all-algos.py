@@ -9,6 +9,7 @@ import http.client
 import json
 import os
 import sys
+from datetime import datetime
 from pprint import pprint
 
 from dotenv import load_dotenv
@@ -20,9 +21,12 @@ SCENEX_SECRET = os.getenv('SCENEX-SECRET')
 
 # Create directory structure
 os.makedirs('output/json', exist_ok=True)
+os.makedirs('output/csv', exist_ok=True)
 
 IMG_URL = sys.argv[1]
-CSV_FILENAME = IMG_URL.split('/')[-1].split('.')[0] + '.csv'
+timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
+os.makedirs(f"output/csv/{timestamp}", exist_ok=True)
+
 
 if len(sys.argv) > 2:
     QUESTION = sys.argv[2]
@@ -39,18 +43,25 @@ def image_to_data_uri(file_path):
 # support single files
 if os.path.isfile(IMG_URL):
     images = [image_to_data_uri(IMG_URL)]
+    csv_filename = f"output/csv/{timestamp}/{IMG_URL.split('/')[-1].split('.')[0]}.csv"
 
 # support dirs of images
 elif os.path.isdir(IMG_URL):
     png_files = glob.glob(f'{IMG_URL}/*.png')
     jpg_files = glob.glob(f'{IMG_URL}/*.jpg')
-    images = png_files + jpg_files
+    jpeg_files = glob.glob(f'{IMG_URL}/*.jpeg')
+    images = png_files + jpg_files + jpeg_files
     for image in images:
-        image = image_to_data_uri(IMG_URL)
+        image = image_to_data_uri(image)
+
+    csv_filename = f"output/csv/{timestamp}/{IMG_URL}.csv"
+
+    print(images)
 
 # support image URLs
 else:
     images = [IMG_URL]
+    csv_filename = f"output/csv/{timestamp}/{IMG_URL.split('/')[-1].split('.')[0]}.csv"
 
 
 headers = {
@@ -96,7 +107,7 @@ for image in images:
 
 connection.close()
 
-with open(CSV_FILENAME, 'w') as file:
+with open(csv_filename, 'w') as file:
     field_names = list(results[0].keys())
 
     writer = csv.DictWriter(file, fieldnames=field_names)
@@ -105,4 +116,4 @@ with open(CSV_FILENAME, 'w') as file:
     for result in results:
         writer.writerow(result)
 
-    print(f'{CSV_FILENAME} written')
+    print(f'{csv_filename} written')
