@@ -25,7 +25,6 @@ os.makedirs('output/csv', exist_ok=True)
 
 IMG_URL = sys.argv[1]
 timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M")
-os.makedirs(f"output/csv/{timestamp}", exist_ok=True)
 
 
 if len(sys.argv) > 2:
@@ -111,6 +110,9 @@ for image in images:
 
 connection.close()
 
+
+# write CSV output
+os.makedirs(f"output/csv/{timestamp}", exist_ok=True)
 with open(csv_filename, 'w') as file:
     field_names = list(results[0].keys())
 
